@@ -45,7 +45,20 @@ def fetch_data():
     trigger_points = []
     current_trigger_point = {'begin': None, 'end': None}
 
+
+    comed_style = 'style=background-color:green'
+    highlight_style = 'style=background-color:yellow'
     output_rows = []
+    output_rows.append(f"""
+        <table>
+            <th>
+                <td>Start local time</td>
+                <td {comed_style}>ComEd</td>
+                <td>Congestion</td>
+                <td>Losses</td>
+                <td>Should trigger?</td>
+            </th>
+    """)
 
     for row in response.json():
         row['datetime_beginning_cpt'] = from_tz.localize(
@@ -59,16 +72,32 @@ def fetch_data():
             trigger_points.append(current_trigger_point)
             current_trigger_point = {'begin': None, 'end': None}
 
+        local_time = row['datetime_beginning_cpt'].strftime(datetime_fmt_display)
+        comed_price = locale.currency(Decimal(row['total_lmp_da']), grouping=True)
+        congestion_price = locale.currency(Decimal(row['congestion_price_da']), grouping=True)
+        loss_price = locale.currency(Decimal(row['marginal_loss_price_da']), grouping=True)
+        trigger_yn = 'yes' if Decimal(row['total_lmp_da']) >= trigger_threshold else 'no'
+
+        if trigger_yn == 'yes':
+            row_style = highlight_style
+            comed_override = highlight_style
+        else:
+            row_style = ''
+            comed_override = comed_override
+
         output_rows.append(
-            'Start local time: {} ComEd: {} Congestion: {} Losses: {} should trigger: {}'.format(
-                row['datetime_beginning_cpt'].strftime(datetime_fmt_display),
-                locale.currency(Decimal(row['total_lmp_da']), grouping=True),
-                locale.currency(Decimal(row['congestion_price_da']), grouping=True),
-                locale.currency(Decimal(row['marginal_loss_price_da']), grouping=True),
-                'yes' if Decimal(row['total_lmp_da']) >= trigger_threshold else 'no'
-            )
+            f"""<tr {row_style}>
+                    <td>{local_time}</td>
+                    <td {comed_override}>{comed_price}</td>
+                    <td>{congestion_price}</td>
+                    <td>{loss_price}</td>
+                    <td>{trigger_yn}</td>
+                </tr>
+            """
         )
     
+    output_rows.append('</table>')
+
     if current_trigger_point['begin'] is not None:
         trigger_points.append(current_trigger_point)
 
@@ -98,7 +127,6 @@ def fetch_data():
     for row in output_rows:
         output = f'{output}\n{row}'
     
-    print(output)
     return output
 
 def send_email(output):
@@ -106,13 +134,14 @@ def send_email(output):
     from_email = Email(os.environ['FROM_EMAIL'])
     to_email = Email(os.environ['TO_EMAIL'])
     date = datetime.now().strftime('%m/%d/%Y')
-    subject = f'Day-Ahead LMP for {date}'
+    trigger_threshold = locale.currency(Decimal(os.environ['TRIGGER_THRESHOLD']), grouping=True))
+    subject = f'Day-Ahead LMP for {date} ({trigger_threshold} trigger)'
     plain_content = Content('text/plain', output)
     html_content = Content('text/html', output.replace('\n', '<br>'))
     mail = Mail(from_email, subject, to_email)
     mail.add_content(plain_content)
     mail.add_content(html_content)
-    response = sg.client.mail.send.post(request_body=mail.get())
+    sg.client.mail.send.post(request_body=mail.get())
 
 if __name__ == '__main__':
     send_email(fetch_data())
