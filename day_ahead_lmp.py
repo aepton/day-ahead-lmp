@@ -49,6 +49,7 @@ def fetch_data():
     highlight_style = 'style="background-color:yellow"'
     output_rows = []
     output_rows.append(f"""
+        <p>
         <table style="margin-top:-50px;border='1px solid black'">
             <th>
                 <tr>
@@ -87,17 +88,15 @@ def fetch_data():
             comed_override = comed_style
 
         output_rows.append(
-            f"""<tr {row_style}>
-                    <td>{local_time}</td>
-                    <td {comed_override}>{comed_price}</td>
-                    <td>{congestion_price}</td>
-                    <td>{loss_price}</td>
-                    <td>{trigger_yn}</td>
-                </tr>
+            f"""<p {row_style}>
+                    <div>Start local time: {local_time}</div>
+                    <div {comed_override}>ComEd: {comed_price}</div>
+                    <div>Congestion: {congestion_price}</div>
+                    <div>Losses: {loss_price}</div>
+                    <div>Run generators: {trigger_yn}</div>
+                </p>
             """
         )
-    
-    output_rows.append('</table>')
 
     if current_trigger_point['begin'] is not None:
         trigger_points.append(current_trigger_point)
@@ -126,7 +125,7 @@ def fetch_data():
     output = f'{output}\n\n-----\n'
 
     for row in output_rows:
-        output = f'{output}{row}'
+        output = f'{output}\n{row}'
     
     return output
 
