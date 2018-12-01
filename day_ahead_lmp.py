@@ -52,11 +52,13 @@ def fetch_data():
     output_rows.append(f"""
         <table>
             <th>
-                <td>Start local time</td>
-                <td {comed_style}>ComEd</td>
-                <td>Congestion</td>
-                <td>Losses</td>
-                <td>Should trigger?</td>
+                <tr>
+                    <td>Start local time</td>
+                    <td {comed_style}>ComEd</td>
+                    <td>Congestion</td>
+                    <td>Losses</td>
+                    <td>Should trigger?</td>
+                </tr>
             </th>
     """)
 
