@@ -46,8 +46,8 @@ def fetch_data():
     current_trigger_point = {'begin': None, 'end': None}
 
 
-    comed_style = 'style=background-color:green'
-    highlight_style = 'style=background-color:yellow'
+    comed_style = 'style="background-color:green"'
+    highlight_style = 'style="background-color:yellow"'
     output_rows = []
     output_rows.append(f"""
         <table>
@@ -125,7 +125,7 @@ def fetch_data():
     output = f'{output}\n\n-----\n'
 
     for row in output_rows:
-        output = f'{output}\n{row}'
+        output = f'{output}{row}'
     
     return output
 
