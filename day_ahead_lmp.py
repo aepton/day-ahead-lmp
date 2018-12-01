@@ -49,7 +49,7 @@ def fetch_data():
     highlight_style = 'style="background-color:yellow"'
     output_rows = []
     output_rows.append(f"""
-        <table style="margin-top:-50px">
+        <table style="margin-top:-50px;border='1px solid black'">
             <th>
                 <tr>
                     <td>Start local time</td>
