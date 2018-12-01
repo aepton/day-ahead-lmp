@@ -72,7 +72,7 @@ def fetch_data():
             row_style = ''
 
         output_rows.append(
-            f'<p {row_style}><div>Start local time: {local_time}</div><div>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
+            f'<p><div>Start local time: {local_time}</div><div {row_style}>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
         )
 
     if current_trigger_point['begin'] is not None:
