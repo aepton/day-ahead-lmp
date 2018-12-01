@@ -83,7 +83,7 @@ def fetch_data():
             comed_override = highlight_style
         else:
             row_style = ''
-            comed_override = comed_override
+            comed_override = comed_style
 
         output_rows.append(
             f"""<tr {row_style}>
