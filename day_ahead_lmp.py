@@ -45,12 +45,11 @@ def fetch_data():
     trigger_points = []
     current_trigger_point = {'begin': None, 'end': None}
 
-
     comed_style = 'style="background-color:green"'
     highlight_style = 'style="background-color:yellow"'
     output_rows = []
     output_rows.append(f"""
-        <table>
+        <table style="margin-top:-50px">
             <th>
                 <tr>
                     <td>Start local time</td>
