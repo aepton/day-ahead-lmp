@@ -48,19 +48,6 @@ def fetch_data():
     comed_style = 'style="background-color:green"'
     highlight_style = 'style="background-color:yellow"'
     output_rows = []
-    output_rows.append(f"""
-        <p>
-        <table style="margin-top:-50px;border='1px solid black'">
-            <th>
-                <tr>
-                    <td>Start local time</td>
-                    <td {comed_style}>ComEd</td>
-                    <td>Congestion</td>
-                    <td>Losses</td>
-                    <td>Should trigger?</td>
-                </tr>
-            </th>
-    """)
 
     for row in response.json():
         row['datetime_beginning_cpt'] = from_tz.localize(
@@ -88,14 +75,7 @@ def fetch_data():
             comed_override = comed_style
 
         output_rows.append(
-            f"""<p {row_style}>
-                    <div>Start local time: {local_time}</div>
-                    <div {comed_override}>ComEd: {comed_price}</div>
-                    <div>Congestion: {congestion_price}</div>
-                    <div>Losses: {loss_price}</div>
-                    <div>Run generators: {trigger_yn}</div>
-                </p>
-            """
+            f'<p {row_style}><div>Start local time: {local_time}</div><div {comed_override}>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
         )
 
     if current_trigger_point['begin'] is not None:
