@@ -45,8 +45,7 @@ def fetch_data():
     trigger_points = []
     current_trigger_point = {'begin': None, 'end': None}
 
-    comed_style = 'style="background-color:green"'
-    highlight_style = 'style="background-color:yellow"'
+    highlight_style = 'style="font-weight:bold"'
     output_rows = []
 
     for row in response.json():
@@ -69,13 +68,11 @@ def fetch_data():
 
         if trigger_yn == 'yes':
             row_style = highlight_style
-            comed_override = highlight_style
         else:
             row_style = ''
-            comed_override = comed_style
 
         output_rows.append(
-            f'<p {row_style}><div>Start local time: {local_time}</div><div {comed_override}>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
+            f'<p {row_style}><div>Start local time: {local_time}</div><div>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
         )
 
     if current_trigger_point['begin'] is not None:
@@ -105,7 +102,7 @@ def fetch_data():
     output = f'{output}\n\n-----\n'
 
     for row in output_rows:
-        output = f'{output}\n{row}'
+        output = f'{output}{row}'
     
     return output
 
