@@ -11,7 +11,7 @@ from decimal import *
 from pytz import timezone
 from sendgrid.helpers.mail import *
 
-locale.setlocale(locale.LC_ALL, 'en_US')
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 def fetch_data():
     getcontext().prec = 10
@@ -103,16 +103,16 @@ def fetch_data():
 
 def send_email(output):
     sg = sendgrid.SendGridAPIClient(apikey=os.environ['SENDGRID_API_KEY'])
-    from_email = Email('abraham.epton@gmail.com')
-    to_email = Email('abraham.epton@gmail.com')
+    from_email = Email(os.environ['FROM_EMAIL'])
+    to_email = Email(os.environ['TO_EMAIL'])
     date = datetime.now().strftime('%m/%d/%Y')
     subject = f'Day-Ahead LMP for {date}'
-    content = Content('text/plain', output)
-    mail = Mail(from_email, subject, to_email, content)
+    plain_content = Content('text/plain', output)
+    html_content = Content('text/html', output.replace('\n', '<br>'))
+    mail = Mail(from_email, subject, to_email)
+    mail.add_content(plain_content)
+    mail.add_content(html_content)
     response = sg.client.mail.send.post(request_body=mail.get())
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
 
 if __name__ == '__main__':
     send_email(fetch_data())
