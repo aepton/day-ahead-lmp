@@ -152,7 +152,7 @@ def send_email(output):
     attachment = Attachment()
     attachment.content = encoded
     attachment.type = 'application/pdf'
-    attachment.filename = f'trigger_{trigger_threshold}.pdf'
+    attachment.filename = f'trigger_{tt}.pdf'
     attachment.disposition = 'attachment'
     attachment.content_id = 'content ID'
 
