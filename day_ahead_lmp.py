@@ -91,9 +91,11 @@ def fetch_data():
             table_row_style = ''
             comed_override = comed_style
 
+        """
         output_rows.append(
             f'<p><div>Start local time: {local_time}</div><div {row_style}>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
         )
+        """
         table_html = f"""
             {table_html}
             <tr {table_row_style}>
