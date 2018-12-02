@@ -143,7 +143,8 @@ def fetch_data():
     return output
 
 def send_email(output):
-    with open(f'/tmp/trigger_{Decimal(os.environ['TRIGGER_THRESHOLD'])}.pdf', 'rb') as f:
+    tt = Decimal(os.environ['TRIGGER_THRESHOLD'])
+    with open(f'/tmp/trigger_{tt}.pdf', 'rb') as f:
         data = f.read()
         f.close()
     encoded = base64.b64encode(data).decode()
@@ -159,7 +160,7 @@ def send_email(output):
     from_email = Email(os.environ['FROM_EMAIL'])
     to_email = Email(os.environ['TO_EMAIL'])
     date = datetime.now().strftime('%m/%d/%Y')
-    trigger_threshold = locale.currency(Decimal(os.environ['TRIGGER_THRESHOLD']), grouping=True)
+    trigger_threshold = locale.currency(tt, grouping=True)
     subject = f'Day-Ahead LMP for {date} ({trigger_threshold} trigger)'
     plain_content = Content('text/plain', output)
     html_content = Content('text/html', output.replace('\n', '<br>'))
