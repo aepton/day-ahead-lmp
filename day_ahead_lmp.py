@@ -48,18 +48,18 @@ def fetch_data():
     current_trigger_point = {'begin': None, 'end': None}
 
     highlight_style = 'style="font-weight:bold"'
-    comed_style = 'style="background-color:green;align:justify"'
-    highlight_cell = 'style="background-color:yellow;align:justify"'
+    comed_style = 'style="background-color:green;align:center"'
+    highlight_cell = 'style="background-color:yellow;align:center"'
     output_rows = []
     table_html = f"""
-        <table style="border:1px solid #333;font-size:14px;font-family:Helvetica,Sans">
+        <table style="font-size:14px;font-family:Helvetica,Sans">
             <th>
                 <tr>
-                    <td style="align:justify">Start local time</td>
+                    <td style="align:center">Start local time</td>
                     <td {comed_style}>ComEd</td>
-                    <td style="align:justify">Congestion</td>
-                    <td style="align:justify">Losses</td>
-                    <td style="align:justify">Run generators?</td>
+                    <td style="align:center">Congestion</td>
+                    <td style="align:center">Losses</td>
+                    <td style="align:center">Run generators?</td>
                 </tr>
             </th>
     """
@@ -87,8 +87,8 @@ def fetch_data():
             table_row_style = highlight_cell
             comed_override = highlight_cell
         else:
-            row_style = 'style="align:justify"'
-            table_row_style = 'style="align:justify"'
+            row_style = 'style="align:center"'
+            table_row_style = 'style="align:center"'
             comed_override = comed_style
 
         """
