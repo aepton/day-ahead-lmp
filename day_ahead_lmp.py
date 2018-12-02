@@ -52,7 +52,7 @@ def fetch_data():
     highlight_cell = 'style="background-color:yellow"'
     output_rows = []
     table_html = f"""
-        <table>
+        <table style="border:1;font-size:1.5em;font-family:Helvetica,Sans">
             <th>
                 <tr>
                     <td>Start local time</td>
@@ -97,11 +97,11 @@ def fetch_data():
         table_html = f"""
             {table_html}
             <tr {table_row_style}>
-                <td>{local_time}</td>
+                <td {table_row_style}>{local_time}</td>
                 <td {comed_override}>{comed_price}</td>
-                <td>{congestion_price}</td>
-                <td>{loss_price}</td>
-                <td>{trigger_yn}</td>
+                <td {table_row_style}>{congestion_price}</td>
+                <td {table_row_style}>{loss_price}</td>
+                <td {table_row_style}>{trigger_yn}</td>
             </tr>
         """
 
