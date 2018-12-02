@@ -52,7 +52,7 @@ def fetch_data():
     highlight_cell = 'style="background-color:#fff95b;align:center"'
     output_rows = []
     table_html = f"""
-        <table style="font-size:14px;font-family:Helvetica,Sans;align:center">
+        <table style="font-size:14px;font-family:Helvetica,Sans;align:center;padding:2px">
             <th>
                 <tr>
                     <td style="align:center">Start local time</td>
