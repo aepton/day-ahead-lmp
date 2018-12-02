@@ -108,7 +108,7 @@ def fetch_data():
     if current_trigger_point['begin'] is not None:
         trigger_points.append(current_trigger_point)
 
-    result_file = open(file_path, 'w+b')
+    result_file = open(f'/tmp/trigger_{trigger_threshold}.pdf', 'w+b')
     pisa.CreatePDF(table_html, dest=result_file)
     result_file.close()
 
