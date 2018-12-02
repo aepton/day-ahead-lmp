@@ -68,7 +68,7 @@ def fetch_data():
         row['datetime_beginning_cpt'] = from_tz.localize(
             datetime.strptime(row['datetime_beginning_ept'], datetime_fmt_response)).astimezone(
                 to_tz)
-        if Decimal(row['total_lmp_da']) >= Decimal(30):
+        if Decimal(row['total_lmp_da']) >= trigger_threshold:
             if current_trigger_point['begin'] is None:
                 current_trigger_point['begin'] = row['datetime_beginning_cpt']
         elif current_trigger_point['begin'] is not None:
