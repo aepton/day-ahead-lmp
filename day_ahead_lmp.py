@@ -48,11 +48,11 @@ def fetch_data():
     current_trigger_point = {'begin': None, 'end': None}
 
     highlight_style = 'style="font-weight:bold"'
-    comed_style = 'style="background-color:green;align:center"'
-    highlight_cell = 'style="background-color:yellow;align:center"'
+    comed_style = 'style="background-color:#87ff8d;align:center"'
+    highlight_cell = 'style="background-color:#fff95b;align:center"'
     output_rows = []
     table_html = f"""
-        <table style="font-size:14px;font-family:Helvetica,Sans">
+        <table style="font-size:14px;font-family:Helvetica,Sans;align:center">
             <th>
                 <tr>
                     <td style="align:center">Start local time</td>
@@ -159,18 +159,19 @@ def send_email(output):
     attachment.content_id = 'content ID'
 
     sg = sendgrid.SendGridAPIClient(apikey=os.environ['SENDGRID_API_KEY'])
-    from_email = Email(os.environ['FROM_EMAIL'])
-    to_email = Email(os.environ['TO_EMAIL'])
-    date = datetime.now().strftime('%m/%d/%Y')
-    trigger_threshold = locale.currency(tt, grouping=True)
-    subject = f'Day-Ahead LMP for {date} ({trigger_threshold} trigger)'
-    plain_content = Content('text/plain', output)
-    html_content = Content('text/html', output.replace('\n', '<br>'))
-    mail = Mail(from_email, subject, to_email)
-    mail.add_content(plain_content)
-    mail.add_content(html_content)
-    mail.add_attachment(attachment)
-    sg.client.mail.send.post(request_body=mail.get())
+    for email in os.environ['TO_EMAIL'].split(','):
+        from_email = Email(os.environ['FROM_EMAIL'])
+        to_email = Email(email)
+        date = datetime.now().strftime('%m/%d/%Y')
+        trigger_threshold = locale.currency(tt, grouping=True)
+        subject = f'Day-Ahead LMP for {date} ({trigger_threshold} trigger)'
+        plain_content = Content('text/plain', output)
+        html_content = Content('text/html', output.replace('\n', '<br>'))
+        mail = Mail(from_email, subject, to_email)
+        mail.add_content(plain_content)
+        mail.add_content(html_content)
+        mail.add_attachment(attachment)
+        sg.client.mail.send.post(request_body=mail.get())
 
 if __name__ == '__main__':
     send_email(fetch_data())
