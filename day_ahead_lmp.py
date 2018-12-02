@@ -30,7 +30,7 @@ def fetch_data():
         'startRow': 1,
         'isActiveMetadata': 'true',
         'fields': ','.join(fields),
-        'datetime_beginning_ept': datetime.now().strftime(datetime_fmt_query),
+        'datetime_beginning_ept': (datetime.now() + timedelta(days=1)).strftime(datetime_fmt_query),
         'row_is_current': '1',
         'pnode_id': '33092371',
         'subscription-key': os.environ['PJM_API_KEY'],
