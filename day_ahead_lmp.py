@@ -1,3 +1,4 @@
+import base64
 import json
 import locale
 import os
@@ -10,6 +11,7 @@ from datetime import datetime, timedelta
 from decimal import *
 from pytz import timezone
 from sendgrid.helpers.mail import *
+from xhtml2pdf import pisa
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
@@ -46,7 +48,21 @@ def fetch_data():
     current_trigger_point = {'begin': None, 'end': None}
 
     highlight_style = 'style="font-weight:bold"'
+    comed_style = 'style="background-color:green"'
+    highlight_cell = 'style="background-color:yellow"'
     output_rows = []
+    table_html = f"""
+        <table>
+            <th>
+                <tr>
+                    <td>Start local time</td>
+                    <td {comed_style}>ComEd</td>
+                    <td>Congestion</td>
+                    <td>Losses</td>
+                    <td>Run generators?</td>
+                </tr>
+            </th>
+    """
 
     for row in response.json():
         row['datetime_beginning_cpt'] = from_tz.localize(
@@ -68,15 +84,33 @@ def fetch_data():
 
         if trigger_yn == 'yes':
             row_style = highlight_style
+            table_row_style = highlight_cell
+            comed_override = highlight_cell
         else:
             row_style = ''
+            table_row_style = ''
+            comed_override = comed_style
 
         output_rows.append(
             f'<p><div>Start local time: {local_time}</div><div {row_style}>ComEd: {comed_price}</div><div>Congestion: {congestion_price}</div><div>Losses: {loss_price}</div><div>Run generators: {trigger_yn}</div></p>'
         )
+        table_html = f"""
+            {table_html}
+            <tr {table_row_style}>
+                <td>{local_time}</td>
+                <td {comed_override}>{comed_price}</td>
+                <td>{congestion_price}</td>
+                <td>{loss_price}</td>
+                <td>{trigger_yn}</td>
+            </tr>
+        """
 
     if current_trigger_point['begin'] is not None:
         trigger_points.append(current_trigger_point)
+
+    result_file = open(file_path, 'w+b')
+    pisa.CreatePDF(table_html, dest=result_file)
+    result_file.close()
 
     output = ''
 
@@ -91,6 +125,8 @@ def fetch_data():
     output = '{}\nTrigger points (assuming threshold of >= {}):'.format(
         output,
         locale.currency(trigger_threshold, grouping=True))
+    if len(trigger_points) == 0:
+        output = f'{output}\nNone today'
     for point in trigger_points:
         begin = point['begin'].strftime(datetime_fmt_display)
         if point['end'] is None:
@@ -107,6 +143,18 @@ def fetch_data():
     return output
 
 def send_email(output):
+    with open(f'/tmp/trigger_{Decimal(os.environ['TRIGGER_THRESHOLD'])}.pdf', 'rb') as f:
+        data = f.read()
+        f.close()
+    encoded = base64.b64encode(data).decode()
+
+    attachment = Attachment()
+    attachment.content = encoded
+    attachment.type = 'application/pdf'
+    attachment.filename = f'trigger_{trigger_threshold}.pdf'
+    attachment.disposition = 'attachment'
+    attachment.content_id = 'content ID'
+
     sg = sendgrid.SendGridAPIClient(apikey=os.environ['SENDGRID_API_KEY'])
     from_email = Email(os.environ['FROM_EMAIL'])
     to_email = Email(os.environ['TO_EMAIL'])
@@ -118,6 +166,7 @@ def send_email(output):
     mail = Mail(from_email, subject, to_email)
     mail.add_content(plain_content)
     mail.add_content(html_content)
+    mail.add_attachment(attachment)
     sg.client.mail.send.post(request_body=mail.get())
 
 if __name__ == '__main__':
