@@ -137,7 +137,7 @@ def fetch_data():
             end = point['end'].strftime(datetime_fmt_display)
         output = f'{output}\nFrom {begin} to {end}'
 
-    output = f'{output}\n\n-----\n'
+    #output = f'{output}\n\n-----\n'
 
     for row in output_rows:
         output = f'{output}{row}'
