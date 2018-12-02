@@ -117,7 +117,7 @@ def fetch_data():
     output = ''
 
     try:
-        with open('note.txt') as fh:
+        with open('/root/day-ahead-lmp/note.txt') as fh:
             note = fh.read()
             if note:
                 output = f'{output}\n{note}\n\n-----\n'
