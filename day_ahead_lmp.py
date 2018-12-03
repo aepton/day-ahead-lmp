@@ -51,7 +51,7 @@ def fetch_data():
     highlight_style = 'style="font-weight:bold"'
     comed_style = 'style="background-color:#87ff8d;align:center"'
     highlight_cell = 'style="background-color:#fff95b;align:center"'
-    severe_highlight_cell = 'style="background-color:#ff7272;align:center'
+    severe_highlight_cell = 'style="background-color:#ff7272;align:center"'
     output_rows = []
     table_html = f"""
         <table style="font-size:14px;font-family:Helvetica,Sans;align:center;padding:2px">
@@ -86,15 +86,12 @@ def fetch_data():
 
         if trigger_yn == 'yes':
             if Decimal(row['total_lmp_da']) >= severe_trigger_threshold:
-                row_style = severe_highlight_cell
                 table_row_style = severe_highlight_cell
                 comed_override = severe_highlight_cell
             else:
-                row_style = highlight_style
                 table_row_style = highlight_cell
                 comed_override = highlight_cell
         else:
-            row_style = 'style="align:center"'
             table_row_style = 'style="align:center"'
             comed_override = comed_style
 
