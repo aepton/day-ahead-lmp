@@ -44,12 +44,14 @@ def fetch_data():
     response = requests.get(url)
 
     trigger_threshold = Decimal(os.environ['TRIGGER_THRESHOLD'])
+    severe_trigger_threshold = Decimal(os.environ['SEVERE_TRIGGER_THRESHOLD'])
     trigger_points = []
     current_trigger_point = {'begin': None, 'end': None}
 
     highlight_style = 'style="font-weight:bold"'
     comed_style = 'style="background-color:#87ff8d;align:center"'
     highlight_cell = 'style="background-color:#fff95b;align:center"'
+    severe_highlight_cell = 'style="background-color:#ff7272;align:center'
     output_rows = []
     table_html = f"""
         <table style="font-size:14px;font-family:Helvetica,Sans;align:center;padding:2px">
@@ -59,7 +61,7 @@ def fetch_data():
                     <td {comed_style}>ComEd</td>
                     <td style="align:center">Congestion</td>
                     <td style="align:center">Losses</td>
-                    <td style="align:center">Run generators?</td>
+                    <td style="align:center">Demand response?</td>
                 </tr>
             </th>
     """
@@ -83,9 +85,14 @@ def fetch_data():
         trigger_yn = 'yes' if Decimal(row['total_lmp_da']) >= trigger_threshold else 'no'
 
         if trigger_yn == 'yes':
-            row_style = highlight_style
-            table_row_style = highlight_cell
-            comed_override = highlight_cell
+            if Decimal(row['total_lmp_da']) >= severe_trigger_threshold:
+                row_style = severe_highlight_cell
+                table_row_style = severe_highlight_cell
+                comed_override = severe_highlight_cell
+            else:
+                row_style = highlight_style
+                table_row_style = highlight_cell
+                comed_override = highlight_cell
         else:
             row_style = 'style="align:center"'
             table_row_style = 'style="align:center"'
@@ -164,7 +171,7 @@ def send_email(output):
         to_email = Email(email)
         date = (datetime.now() + timedelta(days=1)).strftime('%m/%d/%Y')
         trigger_threshold = locale.currency(tt, grouping=True)
-        subject = f'Day-Ahead LMP for {date} ({trigger_threshold} trigger)'
+        subject = f'Day-Ahead LMP for {date}'
         plain_content = Content('text/plain', output)
         html_content = Content('text/html', output.replace('\n', '<br>'))
         mail = Mail(from_email, subject, to_email)
