@@ -130,7 +130,7 @@ def fetch_data():
     
     output = '{}\nStrike price >= ${}/MWh:'.format(
         output,
-        int(trigger_threshold)
+        int(trigger_threshold))
     if len(trigger_points) == 0:
         output = f'{output}\nNone today'
     for point in trigger_points:
