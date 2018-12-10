@@ -128,9 +128,9 @@ def fetch_data():
     except:
         pass
     
-    output = '{}\nStrike price >= {}/MWh):'.format(
+    output = '{}\nStrike price >= ${}/MWh:'.format(
         output,
-        locale.currency(int(trigger_threshold), grouping=True))
+        int(trigger_threshold)
     if len(trigger_points) == 0:
         output = f'{output}\nNone today'
     for point in trigger_points:
